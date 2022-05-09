@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'MountainPass.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': get_env('NAME_DB'),
-        'USER': get_env('USER_DB'),
-        'PASSWORD': get_env('PASSWORD_USER_DB'),
-        'HOST': get_env('HOST_DB'),
-        'PORT': get_env('PORT_DB'),
+        'NAME': 'pereval',
+        'USER': get_env('FSTR_DB_LOGIN'),
+        'PASSWORD': get_env('FSTR_DB_PASS'),
+        'HOST': get_env('FSTR_DB_HOST'),
+        'PORT': get_env('FSTR_DB_PORT'),
     }
 }
 

@@ -36,7 +36,7 @@ class PerevalAdded(Base):
     add_time = Column(DateTime)
     date_added = Column(DateTime)
     status = Column(String)
-    beautyTitle = Column(String)
+    beauty_title = Column(String)
     title = Column(String)
     other_titles = Column(String)
     connect = Column(String)

@@ -36,7 +36,7 @@ class User(BaseModel):
 
 
 class PerevalAddedCreate(BaseModel):
-    beautyTitle: str
+    beauty_title: str
     title: str
     other_titles: str
     connect: str

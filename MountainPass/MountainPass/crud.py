@@ -14,13 +14,6 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 
-# {
-#   "email": "mail@test.ru",
-#   "fam": "Иванов",
-#   "name": "Семен",
-#   "otc": "Пертович",
-#   "phone": "79000000000"
-# }
 def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(**user.dict())
     db.add(db_user)
@@ -30,11 +23,6 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 
-# {
-#   "latitude": 50.5326,
-#   "longitude": 25.2625,
-#   "height": 120,
-# }
 def create_coords(db: Session, coords: schemas.CoordsCreate):
     db_coords = models.Coords(**coords.dict())
     db.add(db_coords)
@@ -46,7 +34,7 @@ def create_coords(db: Session, coords: schemas.CoordsCreate):
 
 # {
 #     "status": "new"
-#     "beautyTitle": "пер."
+#     "beauty_title": "пер."
 #     "title": "Перевал №1"
 #     "other_titles": "Наипрекраснейший перевал"
 #     "connect": ", "

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, Float, String, DateTime
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -24,15 +24,16 @@ class Coords(Base):
     longitude = Column(Float)
     height = Column(Integer)
 
-    owner_coords = relationship("PerevalAdded", back_populates="coords_add")
+    pereval_add = relationship("PerevalAdded", back_populates="owner_p")
+    # owner_p = relationship("PerevalAdded", backref="pereval_added")
 
 
 class PerevalAdded(Base):
     __tablename__ = 'pereval_added'
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer)
-    coords_id = Column(Integer)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    coords_id = Column(Integer, ForeignKey('coords.id'))
     add_time = Column(DateTime)
     date_added = Column(DateTime)
     status = Column(String)
@@ -45,6 +46,7 @@ class PerevalAdded(Base):
     autumn = Column(String)
     spring = Column(String)
 
-    owner = relationship("User", back_populates="pereval_add")
-    coords_add = relationship("Coords", back_populates="owner_coords")
+    owner = relationship("User", backref="users")
+    owner_p = relationship("Coords", backref="coords")
+    # coords_add = relationship("Coords", back_populates="owner_p")
 

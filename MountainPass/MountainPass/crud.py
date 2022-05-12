@@ -26,5 +26,40 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
+
     return db_user
+
+
+# {
+#   "latitude": 50.5326,
+#   "longitude": 25.2625,
+#   "height": 120,
+# }
+def create_coords(db: Session, coords: schemas.CoordsCreate):
+    db_coords = models.Coords(**coords.dict())
+    db.add(db_coords)
+    db.commit()
+    db.refresh(db_coords)
+
+    return db_coords
+
+
+# {
+#     "status": "new"
+#     "beautyTitle": "пер."
+#     "title": "Перевал №1"
+#     "other_titles": "Наипрекраснейший перевал"
+#     "connect": ", "
+#     "winter": ""
+#     "summer": "1А"
+#     "autumn": "3А"
+#     "spring": "2А"
+# }
+def create_pereval(db: Session, pereval: schemas.PerevalAddedCreate):
+    db_pereval = models.PerevalAdded(**pereval.dict(), status='new')
+    db.add(db_pereval)
+    db.commit()
+    db.refresh(db_pereval)
+
+    return db_pereval
 

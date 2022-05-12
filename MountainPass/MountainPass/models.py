@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, Float, String
+from sqlalchemy import Column, Integer, Float, String, DateTime
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -33,6 +33,8 @@ class PerevalAdded(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer)
     coords_id = Column(Integer)
+    add_time = Column(DateTime)
+    date_added = Column(DateTime)
     status = Column(String)
     beautyTitle = Column(String)
     title = Column(String)

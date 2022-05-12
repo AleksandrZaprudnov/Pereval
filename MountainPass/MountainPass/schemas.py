@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from pydantic import BaseModel
 
@@ -39,7 +40,7 @@ class PerevalAddedCreate(BaseModel):
     title: str
     other_titles: str
     connect: str
-    add_time: str
+    add_time: datetime
     user: Optional[UserCreate] = None
     coords: Optional[CoordsCreate] = None
     winter: str

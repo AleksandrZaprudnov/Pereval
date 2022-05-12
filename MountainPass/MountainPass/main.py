@@ -34,16 +34,16 @@ async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_
 
 @app.post("/coords/", response_model=schemas.Coords)
 async def create_coords(coords: schemas.CoordsCreate, db: Session = Depends(get_db)):
-    # db_coords = crud.get_user_by_email(db, email=user.email)
-    # if db_user:
-    #     raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_coords(db=db, coords=coords)
 
 
 @app.post("/submitData/", response_model=schemas.PerevalAdded)
 async def submitData(pereval: schemas.PerevalAddedCreate, db: Session = Depends(get_db)):
-    # print(pereval.user)
-    # print(pereval.coords)
-    # print(pereval.add_time)
+    new_user = crud.create_user(db=db, user=pereval.user)
+    new_coords = crud.create_coords(db=db, coords=pereval.coords)
+
+    pereval.user = new_user
+    pereval.coords = new_coords
+
     return crud.create_pereval(db=db, pereval=pereval)
 

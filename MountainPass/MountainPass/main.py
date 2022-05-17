@@ -1,11 +1,11 @@
 from typing import List
 
 from fastapi import Depends, FastAPI, Request
-from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+
 from . import crud, models, schemas
 from .database import SessionLocal, engine
-from .errors import ErrorConnectionServer, ErrorCreatingRecord, ReJSONResponse
+from .errors import ErrorConnectionServer, ErrorCreatingRecord, get_json_response
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -22,12 +22,12 @@ def get_db():
 
 @app.exception_handler(ErrorCreatingRecord)
 async def unicorn_exception_handler(request: Request, exc: ErrorCreatingRecord):
-    return ReJSONResponse(500, exc.name)
+    return get_json_response(500, exc.name, 'null')
 
 
 @app.exception_handler(ErrorConnectionServer)
-async def unicorn_exception_handler(request: Request, exc: ErrorConnectionServer):
-    return ReJSONResponse(500, exc.name)
+async def srv_connect_exception_handler(request: Request, exc: ErrorConnectionServer):
+    return get_json_response(500, exc.name, 'null')
 
 
 @app.post("/users/", response_model=schemas.User)
@@ -37,7 +37,8 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if db_user:
         raise ErrorCreatingRecord('Пльзователь с таким email существует')
 
-    return crud.create_user(db=db, user=user)
+    db_user_id = crud.create_user(db=db, user=user)
+    return get_json_response(200, 'Отправлено успешно', db_user_id)
 
 
 @app.get("/users/", response_model=List[schemas.User])
@@ -67,5 +68,5 @@ async def submitData(pereval: schemas.PerevalAddedCreate, db: Session = Depends(
 
     new_pereval = crud.create_pereval(db=db, pereval=pereval)
 
-    return new_pereval
+    return get_json_response(200, 'Отправлено успешно', new_pereval.id)
 

@@ -2,6 +2,7 @@ import datetime
 
 from sqlalchemy.orm import Session
 from . import models, schemas
+from .errors import ErrorNumberDetails, ErrorCreatingRecord
 
 
 def get_user(db: Session, user_id: int):
@@ -17,6 +18,11 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
+    db_user = get_user_by_email(db, email=user.email)
+
+    if db_user:
+        raise ErrorCreatingRecord('Пльзователь с таким email существует')
+
     db_user = models.User(**user.dict())
 
     db.add(db_user)
@@ -37,6 +43,7 @@ def create_coords(db: Session, coords: schemas.CoordsCreate):
 
 
 def create_pereval(db: Session, pereval: schemas.PerevalAddedCreate):
+
     db_pereval = models.PerevalAdded(
         beauty_title=pereval.beauty_title,
         title=pereval.title,
@@ -50,6 +57,7 @@ def create_pereval(db: Session, pereval: schemas.PerevalAddedCreate):
         autumn=pereval.autumn,
         spring=pereval.spring
     )
+
     db_pereval.status = 'new'
     db_pereval.date_added = datetime.datetime.now()
 
@@ -59,3 +67,19 @@ def create_pereval(db: Session, pereval: schemas.PerevalAddedCreate):
 
     return db_pereval
 
+
+# Результат метода: JSON
+#
+# status — код HTTP, целое число:
+# 500 — ошибка при выполнении операции;
+# 400 — Bad Request (при нехватке полей);
+# 200 — успех.
+# message — строка:
+# Причина ошибки (если она была);
+# Отправлено успешно;
+# Если отправка успешна, дополнительно возвращается id вставленной записи.
+# id — идентификатор, который был присвоен объекту при добавлении в базу данных.
+# Примеры:
+#
+# { "status": 500, "message": "Ошибка подключения к базе данных","id": null}
+# { "status": 200, "message": null, "id": 42 }

@@ -1,9 +1,11 @@
 from typing import List
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from . import crud, models, schemas
 from .database import SessionLocal, engine
+from .errors import ErrorConnectionServer, ErrorCreatingRecord, ReJSONResponse
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -18,11 +20,23 @@ def get_db():
         db.close()
 
 
+@app.exception_handler(ErrorCreatingRecord)
+async def unicorn_exception_handler(request: Request, exc: ErrorCreatingRecord):
+    return ReJSONResponse(500, exc.name)
+
+
+@app.exception_handler(ErrorConnectionServer)
+async def unicorn_exception_handler(request: Request, exc: ErrorConnectionServer):
+    return ReJSONResponse(500, exc.name)
+
+
 @app.post("/users/", response_model=schemas.User)
 async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
+
     if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise ErrorCreatingRecord('Пльзователь с таким email существует')
+
     return crud.create_user(db=db, user=user)
 
 
@@ -39,11 +53,19 @@ async def create_coords(coords: schemas.CoordsCreate, db: Session = Depends(get_
 
 @app.post("/submitData/", response_model=schemas.PerevalAdded)
 async def submitData(pereval: schemas.PerevalAddedCreate, db: Session = Depends(get_db)):
+
+    try:
+        db.execute('SELECT * FROM users')
+    except Exception as error:
+        raise ErrorConnectionServer(f'Ошибка соединения с сервером: {error}')
+
     new_user = crud.create_user(db=db, user=pereval.user)
     new_coords = crud.create_coords(db=db, coords=pereval.coords)
 
     pereval.user = new_user
     pereval.coords = new_coords
 
-    return crud.create_pereval(db=db, pereval=pereval)
+    new_pereval = crud.create_pereval(db=db, pereval=pereval)
+
+    return new_pereval
 

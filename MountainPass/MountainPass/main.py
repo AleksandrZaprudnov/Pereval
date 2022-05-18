@@ -1,6 +1,9 @@
 from typing import List
 
 from fastapi import Depends, FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from . import crud, models, schemas
@@ -13,6 +16,10 @@ app = FastAPI()
 
 
 def get_db():
+    """
+    Получение сессии, подключение к БД
+    :return:
+    """
     db = SessionLocal()
     try:
         yield db
@@ -22,12 +29,43 @@ def get_db():
 
 @app.exception_handler(ErrorCreatingRecord)
 async def unicorn_exception_handler(request: Request, exc: ErrorCreatingRecord):
+    """
+    Декорирование ошибки создания записи в БД
+    :param request: запрос
+    :param exc: переопределен класс Exception
+    :return: результат ошибки в формате JSON
+    """
     return get_json_response(500, exc.name, 'null')
 
 
 @app.exception_handler(ErrorConnectionServer)
 async def srv_connect_exception_handler(request: Request, exc: ErrorConnectionServer):
+    """
+    Декорирование ошибки проверки подключения к БД
+    :param request: запрос
+    :param exc: переопределен класс Exception
+    :return: результат ошибки в формате JSON
+    """
     return get_json_response(500, exc.name, 'null')
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(
+        request: Request,
+        exc: RequestValidationError
+):
+    """
+    Декорирование ошибки на несоответствия схеме объекта БД
+    :param request: запрос
+    :param exc: класс исключения RequestValidationError
+    :return: результат ошибки в формате JSON с дополнением описанием и схемой
+    """
+    return JSONResponse(
+        status_code=422,
+        content=jsonable_encoder(
+            {'detail': exc.errors(), 'description': 'Несоответствие схеме', 'body': exc.body}
+        )
+    )
 
 
 @app.post("/users/", response_model=schemas.User)

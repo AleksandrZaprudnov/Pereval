@@ -144,3 +144,18 @@ async def submitData(pereval: schemas.PerevalAddedCreate, db: Session = Depends(
 
     return get_json_response(200, 'Отправлено успешно', new_pereval.id)
 
+
+@app.get("/submitData/{pereval_id}", response_model=schemas.PerevalAdded)
+async def get_submitData_id(pereval_id: int, db: Session = Depends(get_db)):
+    """
+    Получение информации о перевале по id
+    :param db: сессия подключения к БД
+    :return: сообщение в формате JSON
+    """
+    db_pereval_info = crud.get_pereval(db, pereval_id)
+
+    if db_pereval_info is None:
+        return get_json_response(422, f'Перевал с id {pereval_id} отсутствует')
+
+    return get_json_response(200, 'Объект получен', jsonable_encoder(db_pereval_info))
+

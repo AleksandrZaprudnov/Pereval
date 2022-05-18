@@ -25,7 +25,6 @@ class Coords(Base):
     height = Column(Integer)
 
     pereval_add = relationship("PerevalAdded", back_populates="owner_p")
-    # owner_p = relationship("PerevalAdded", backref="pereval_added")
 
 
 class PerevalAdded(Base):
@@ -48,5 +47,4 @@ class PerevalAdded(Base):
 
     owner = relationship("User", backref="users")
     owner_p = relationship("Coords", backref="coords")
-    # coords_add = relationship("Coords", back_populates="owner_p")
 

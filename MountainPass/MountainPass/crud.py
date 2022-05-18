@@ -1,8 +1,10 @@
 import datetime
 
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
+
 from . import models, schemas
-from .errors import ErrorNumberDetails, ErrorCreatingRecord
+from .errors import ErrorCreatingRecord
 
 
 def get_user(db: Session, user_id: int):
@@ -66,4 +68,19 @@ def create_pereval(db: Session, pereval: schemas.PerevalAddedCreate):
     db.refresh(db_pereval)
 
     return db_pereval
+
+
+def get_pereval(db: Session, pereval_id: int):
+    pereval = db.query(models.PerevalAdded).filter(models.PerevalAdded.id == pereval_id).first()
+    user = db.query(models.User).filter(models.User.id == pereval.user_id).first()
+    coords = db.query(models.Coords).filter(models.Coords.id == pereval.coords_id).first()
+
+    json_user = jsonable_encoder(user)
+    json_coords = jsonable_encoder(coords)
+    dict_pereval = jsonable_encoder(pereval)
+
+    dict_pereval['user_id'] = json_user
+    dict_pereval['coords_id'] = json_coords
+
+    return dict_pereval
 

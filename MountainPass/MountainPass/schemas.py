@@ -4,6 +4,9 @@ from pydantic import BaseModel
 
 
 class CoordsCreate(BaseModel):
+    """
+    Класс схемы для создания записи координат.
+    """
     latitude: float
     longitude: float
     height: int
@@ -16,11 +19,10 @@ class Coords(BaseModel):
         orm_mode = True
 
 
-# class UserBase(BaseModel):
-#     email: str
-
-
 class UserCreate(BaseModel):
+    """
+    Класс схемы для создания пользователя.
+    """
     email: str
     fam: str
     name: str
@@ -36,6 +38,9 @@ class User(BaseModel):
 
 
 class PerevalAddedCreate(BaseModel):
+    """
+    Класс схемы для создания перевала.
+    """
     beauty_title: str
     title: str
     other_titles: str
@@ -50,6 +55,9 @@ class PerevalAddedCreate(BaseModel):
 
 
 class PerevalAddedUpdate(BaseModel):
+    """
+    Класс схемы для обновления сведений о перевале.
+    """
     beauty_title: Optional[str] = None
     title: Optional[str] = None
     other_titles: Optional[str] = None

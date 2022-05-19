@@ -28,7 +28,7 @@ def get_db():
 
 
 @app.exception_handler(ErrorCreatingRecord)
-async def unicorn_exception_handler(request: Request, exc: ErrorCreatingRecord):
+async def unicorn_exception_handler(request: Request, exc: ErrorCreatingRecord) -> str:
     """
     Декорирование ошибки создания записи в БД
     (развернутое описание ошибки вместо Internal Server Error).
@@ -40,7 +40,7 @@ async def unicorn_exception_handler(request: Request, exc: ErrorCreatingRecord):
 
 
 @app.exception_handler(ErrorConnectionServer)
-async def srv_connect_exception_handler(request: Request, exc: ErrorConnectionServer):
+async def srv_connect_exception_handler(request: Request, exc: ErrorConnectionServer) -> str:
     """
     Декорирование ошибки проверки подключения к БД
     (развернутое описание ошибки вместо Internal Server Error).
@@ -55,7 +55,7 @@ async def srv_connect_exception_handler(request: Request, exc: ErrorConnectionSe
 async def validation_exception_handler(
         request: Request,
         exc: RequestValidationError
-):
+) -> object:
     """
     Декорирование ошибки на несоответствия схеме объекта БД
     (развернутое описание ошибки вместо Request Validation Error).
@@ -72,7 +72,7 @@ async def validation_exception_handler(
 
 
 @app.post("/users/", response_model=schemas.User)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)) -> str:
     """
     Вызов функции создание пользователя и предварительная проверка наличия в БД по email,
     если пользователь с email существует, вызов исключения.

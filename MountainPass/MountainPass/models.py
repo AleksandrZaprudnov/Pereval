@@ -4,6 +4,9 @@ from .database import Base
 
 
 class User(Base):
+    """
+    Класс модели пользователя.
+    """
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True, index=True)
@@ -17,6 +20,9 @@ class User(Base):
 
 
 class Coords(Base):
+    """
+    Класс модели географических координат перевала.
+    """
     __tablename__ = 'coords'
 
     id = Column(Integer, primary_key=True, index=True)
@@ -28,6 +34,9 @@ class Coords(Base):
 
 
 class PerevalAdded(Base):
+    """
+    Класс модели перевала.
+    """
     __tablename__ = 'pereval_added'
 
     id = Column(Integer, primary_key=True, index=True)

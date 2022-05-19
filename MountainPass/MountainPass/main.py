@@ -77,7 +77,7 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     Вызов функции создание пользователя и предварительная проверка наличия в БД по email,
     если пользователь с email существует, вызов исключения.
     Используется декоратор POST.
-    :param user: класс базовой модели пользователя
+    :param user: класс схема базовой модели пользователя
     :param db: сессия подключения к БД
     :return: сообщение в формате JSON о результате создания и id объекта
     """
@@ -110,7 +110,7 @@ async def create_coords(coords: schemas.CoordsCreate, db: Session = Depends(get_
     Вызов функции создание пользователя и предварительная проверка наличия в БД по email,
     если пользователь с email существует, вызов исключения.
     Используется декоратор POST.
-    :param coords: класс базовой модели координат
+    :param coords: класс схема базовой модели координат
     :param db: сессия подключения к БД
     :return: сообщение в формате JSON id объекта
     """
@@ -122,7 +122,7 @@ async def submitData(pereval: schemas.PerevalAddedCreate, db: Session = Depends(
     """
     Вызов функции создания пользователя, координат и записи о перевале,
     Используется декоратор POST.
-    :param pereval: класс базовой модели перевала
+    :param pereval: класс схема базовой модели перевала
     :param db: сессия подключения к БД
     :return: в случае успешного создания записи в БД, возвращается JSON с ответом
     об успешной отправке и id объекта (перевала)
@@ -149,6 +149,7 @@ async def submitData(pereval: schemas.PerevalAddedCreate, db: Session = Depends(
 async def get_submitData_id(pereval_id: int, db: Session = Depends(get_db)):
     """
     Получение информации о перевале по id
+    Используется декоратор GET.
     :param db: сессия подключения к БД
     :return: сообщение в формате JSON
     """
@@ -158,4 +159,25 @@ async def get_submitData_id(pereval_id: int, db: Session = Depends(get_db)):
         return get_json_response(422, f'Перевал с id {pereval_id} отсутствует')
 
     return get_json_response(200, 'Объект получен', jsonable_encoder(db_pereval_info))
+
+
+@app.patch("/submitData/{pereval_id}", response_model=schemas.PerevalAdded, response_model_exclude_none=True)
+async def patch_submitData_id(pereval_id: int, pereval: schemas.PerevalAddedUpdate, db: Session = Depends(get_db)):
+    """
+    Обновление информации по id о перевале
+    Используется декоратор PATCH.
+    :param pereval: класс схема базовой модели перевала
+    :param db: сессия подключения к БД
+    :return: сообщение в формате JSON
+    """
+    db_pereval_info = crud.get_pereval(db, pereval_id)
+
+    if db_pereval_info is None:
+        return get_json_response(422, f'Перевал с id {pereval_id} отсутствует')
+
+    if not db_pereval_info['status'] == 'new':
+        return get_json_response(422, f'Перевал с id {pereval_id} на модерации')
+
+    update_pereval = crud.update_pereval(pereval_id, db, pereval)
+    return get_json_response(200, 'Запись обновлена', update_pereval.id)
 

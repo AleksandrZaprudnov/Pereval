@@ -70,6 +70,39 @@ def create_pereval(db: Session, pereval: schemas.PerevalAddedCreate):
     return db_pereval
 
 
+def update_pereval(pereval_id: int, db: Session, pereval: schemas.PerevalAddedUpdate):
+    db_pereval = db.query(models.PerevalAdded).filter(models.PerevalAdded.id == pereval_id).first()
+
+    db_pereval.beauty_title = pereval.beauty_title
+    db_pereval.title = pereval.title
+    db_pereval.other_titles = pereval.other_titles
+    db_pereval.connect = pereval.connect
+    db_pereval.winter = pereval.winter
+    db_pereval.summer = pereval.summer
+    db_pereval.autumn = pereval.autumn
+    db_pereval.spring = pereval.spring
+
+    if not db_pereval.coords_id is None:
+        db_coords = db.query(models.Coords).filter(models.Coords.id == db_pereval.coords_id).first()
+
+        db_coords.latitude = pereval.coords.latitude
+        db_coords.longitude = pereval.coords.longitude
+        db_coords.height = pereval.coords.height
+
+        db.add(db_coords)
+        db.commit()
+        db.refresh(db_coords)
+    else:
+        db_coords = create_coords(db, pereval.coords)
+        db_pereval.coords_id = db_coords.id
+
+    db.add(db_pereval)
+    db.commit()
+    db.refresh(db_pereval)
+
+    return db_pereval
+
+
 def get_pereval(db: Session, pereval_id: int):
     pereval = db.query(models.PerevalAdded).filter(models.PerevalAdded.id == pereval_id).first()
     user = db.query(models.User).filter(models.User.id == pereval.user_id).first()

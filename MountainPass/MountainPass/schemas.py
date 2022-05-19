@@ -49,6 +49,18 @@ class PerevalAddedCreate(BaseModel):
     spring: str
 
 
+class PerevalAddedUpdate(BaseModel):
+    beauty_title: Optional[str] = None
+    title: Optional[str] = None
+    other_titles: Optional[str] = None
+    connect: Optional[str] = None
+    coords: Optional[CoordsCreate] = None
+    winter: Optional[str] = None
+    summer: Optional[str] = None
+    autumn: Optional[str] = None
+    spring: Optional[str] = None
+
+
 class PerevalAdded(BaseModel):
     # id: int
 

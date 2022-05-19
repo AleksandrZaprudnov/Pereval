@@ -191,3 +191,17 @@ async def patch_submitData_id(pereval_id: int, pereval: schemas.PerevalAddedUpda
     update_pereval = crud.update_pereval(pereval_id, db, pereval)
     return get_json_response(200, 'Запись обновлена', update_pereval.id)
 
+
+@app.get("/perevals/{email}", response_model=List[schemas.PerevalAddedCreate])
+async def read_perevals(email: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """
+    Получение информации о перевалах, созданных пользователем (фильтр по email)
+    Используется декоратор GET.
+    :param skip: пропуск по id
+    :param limit: лимит выборки по количеству записей
+    :param db: сессия подключения к БД
+    :return: сообщение в формате JSON
+    """
+    perevals = crud.get_perevals(db=db, email=email, skip=skip, limit=limit)
+    return jsonable_encoder(perevals)
+

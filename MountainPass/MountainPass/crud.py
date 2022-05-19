@@ -117,3 +117,9 @@ def get_pereval(db: Session, pereval_id: int):
 
     return dict_pereval
 
+
+def get_perevals(db: Session, email: str, skip: int = 0, limit: int = 100):
+    db_user = db.query(models.User).filter(models.User.email == email).first()
+    q_perevals = db.query(models.PerevalAdded).filter(models.PerevalAdded.user_id == db_user.id)
+    return q_perevals.offset(skip).limit(limit).all()
+

@@ -117,3 +117,21 @@ def get_pereval(db: Session, pereval_id: int):
 
     return dict_pereval
 
+
+def get_perevals(db: Session, email: str, skip: int = 0, limit: int = 100) -> list:
+    db_user = db.query(models.User).filter(models.User.email == email).first()
+    q_perevals = db.query(models.PerevalAdded).filter(models.PerevalAdded.user_id == db_user.id).offset(skip).limit(limit).all()
+
+    list_json_perevals = jsonable_encoder(q_perevals)
+    json_user = jsonable_encoder(db_user)
+
+    index = -1
+    for pereval in q_perevals:
+        index += 1
+        json_coords = jsonable_encoder(db.query(models.Coords).filter(models.Coords.id == pereval.coords_id).first())
+
+        list_json_perevals[index]['user'] = json_user
+        list_json_perevals[index]['coords'] = json_coords
+
+    return list_json_perevals
+

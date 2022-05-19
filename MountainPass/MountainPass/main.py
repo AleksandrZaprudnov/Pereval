@@ -174,7 +174,7 @@ async def patch_submitData_id(pereval_id: int, pereval: schemas.PerevalAddedUpda
     # pending — если модератор взял в работу;
     # accepted — модерация прошла успешно;
     # rejected — модерация прошла, информация не принята.
-    status = [
+    statuses = [
         'pending',
         'accepted',
         'rejected',
@@ -185,7 +185,7 @@ async def patch_submitData_id(pereval_id: int, pereval: schemas.PerevalAddedUpda
     if db_pereval_info is None:
         return get_json_response(422, f'Перевал с id {pereval_id} отсутствует')
 
-    if db_pereval_info['status'] in status:
+    if db_pereval_info['status'] in statuses:
         return get_json_response(422, f'Перевал с id {pereval_id} на модерации')
 
     update_pereval = crud.update_pereval(pereval_id, db, pereval)

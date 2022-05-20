@@ -1,15 +1,15 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class CoordsCreate(BaseModel):
     """
     Класс схемы для создания записи координат.
     """
-    latitude: float
-    longitude: float
-    height: int
+    latitude: float = Field(title='Широта (гр)', ge=0, le=90)
+    longitude: float = Field(title='Долгота (гр)', ge=0, le=90)
+    height: int = Field(title='Высота (м)', ge=0)
 
     class Config:
         schema_extra = {
@@ -22,7 +22,7 @@ class CoordsCreate(BaseModel):
 
 
 class Coords(BaseModel):
-    id: int
+    id: int = Field(title='Уникальный идентификатор записи (устанавливается автоматически)')
 
     class Config:
         orm_mode = True
@@ -32,11 +32,11 @@ class UserCreate(BaseModel):
     """
     Класс схемы для создания пользователя.
     """
-    email: str
-    fam: str
-    name: str
-    otc: str
-    phone: str
+    email: str = Field(title='Email пользователя', max_length=50)
+    fam: str = Field(title='Фамилия пользователя', max_length=30)
+    name: str = Field(title='Имя пользователя', max_length=30)
+    otc: str = Field(title='Отчество пользователя', max_length=30)
+    phone: str = Field(title='Номер телефона пользователя', max_length=11)
 
     class Config:
         schema_extra = {
@@ -51,7 +51,7 @@ class UserCreate(BaseModel):
 
 
 class User(BaseModel):
-    id: int
+    id: int = Field(title='Уникальный идентификатор записи (устанавливается автоматически)')
 
     class Config:
         orm_mode = True
@@ -61,17 +61,17 @@ class PerevalAddedCreate(BaseModel):
     """
     Класс схемы для создания перевала.
     """
-    beauty_title: str
-    title: str
-    other_titles: str
-    connect: str
+    beauty_title: str = Field(title='Вид географического объекта', max_length=10)
+    title: str = Field(title='Сокращенное название', max_length=100)
+    other_titles: str = Field(title='Полное название, дополненное/расширенное', max_length=500)
+    connect: str = Field(title='Разделитель', max_length=3)
     add_time: datetime
     user: Optional[UserCreate] = None
     coords: Optional[CoordsCreate] = None
-    winter: str
-    summer: str
-    autumn: str
-    spring: str
+    winter: str = Field(title='Сложность передвижения по местности в зимнее время', max_length=2)
+    summer: str = Field(title='Сложность передвижения по местности в летнее время', max_length=2)
+    autumn: str = Field(title='Сложность передвижения по местности в весеннее время', max_length=2)
+    spring: str = Field(title='Сложность передвижения по местности в осеннее время', max_length=2)
 
     class Config:
         schema_extra = {
@@ -136,7 +136,7 @@ class PerevalAddedUpdate(BaseModel):
 
 
 class PerevalAdded(BaseModel):
-    # id: int
+    id: int = Field(title='Уникальный идентификатор записи (устанавливается автоматически)')
 
     class Config:
         orm_mode = True

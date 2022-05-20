@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, Field
 
 
@@ -105,15 +105,15 @@ class PerevalAddedUpdate(BaseModel):
     """
     Класс схемы для обновления сведений о перевале.
     """
-    beauty_title: Optional[str] = None
-    title: Optional[str] = None
-    other_titles: Optional[str] = None
-    connect: Optional[str] = None
-    coords: Optional[CoordsCreate] = None
-    winter: Optional[str] = None
-    summer: Optional[str] = None
-    autumn: Optional[str] = None
-    spring: Optional[str] = None
+    beauty_title: Union[str, None] = Field(default=None, title='Вид географического объекта', max_length=10)
+    title: Union[str, None] = Field(default=None, title='Сокращенное название', max_length=100)
+    other_titles: Union[str, None] = Field(default=None, title='Полное название, дополненное/расширенное', max_length=500)
+    connect: Union[str, None] = Field(default=None, title='Разделитель', max_length=3)
+    coords: Union[CoordsCreate, None] = None
+    winter: Union[str, None] = Field(default=None, title='Сложность передвижения по местности в зимнее время', max_length=2)
+    summer: Union[str, None] = Field(default=None, title='Сложность передвижения по местности в летнее время', max_length=2)
+    autumn: Union[str, None] = Field(default=None, title='Сложность передвижения по местности в весеннее время', max_length=2)
+    spring: Union[str, None] = Field(default=None, title='Сложность передвижения по местности в осеннее время', max_length=2)
 
     class Config:
         schema_extra = {
